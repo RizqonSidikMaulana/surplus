@@ -6,7 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class ProductSeeder extends Seeder
+class CategorySeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -18,42 +18,37 @@ class ProductSeeder extends Seeder
         $date = date('Y-m-d H:i:s');
         $data = [
             [
-                'name' => 'Roti Sobek',
-                'description' => 'Rasa Coklat',
+                'name' => 'Makanan Berat',
                 'enable' => true,
                 'created_at' => $date,
                 'updated_at' => $date,
             ],
             [
-                'name' => 'Pisang Ambon',
-                'description' => '10 Buah',
+                'name' => 'Makanan Ringan',
                 'enable' => true,
                 'created_at' => $date,
                 'updated_at' => $date,
             ],
             [
-                'name' => 'Susu UHT',
-                'description' => 'Rasa Vanilla',
+                'name' => 'Camilan',
                 'enable' => true,
                 'created_at' => $date,
                 'updated_at' => $date,
             ],
             [
-                'name' => 'Nasi Goreng',
-                'description' => 'Special,Basic,Seafood',
+                'name' => 'Minuman',
                 'enable' => true,
                 'created_at' => $date,
                 'updated_at' => $date,
             ],
             [
-                'name' => 'Keripik Pisang',
-                'description' => 'Rasa Balado, Coklat, BBQ',
+                'name' => 'Buah & Sayur',
                 'enable' => true,
                 'created_at' => $date,
                 'updated_at' => $date,
             ]
         ];
         
-        DB::table('products')->insert($data);
+        DB::table('categories')->insert($data);
     }
 }
