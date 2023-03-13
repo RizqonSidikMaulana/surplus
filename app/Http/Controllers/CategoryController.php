@@ -23,7 +23,7 @@ class CategoryController extends Controller
             $page = request('page');
         }
 
-        $data = Category::with(['products' => function ($query) {
+        $data = Category::with(['products.images' => function ($query) {
             $query->where('enable', true);
         }])->where('enable', '=', true);
 
@@ -116,7 +116,7 @@ class CategoryController extends Controller
             'data' => [],
         ];
 
-        $category = Category::with('products')->where('id', '=', $id)->get();
+        $category = Category::with('products.images')->where('id', '=', $id)->get();
         $response['data'] = $category;
 
         if (!$category->toArray()) {
