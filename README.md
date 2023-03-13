@@ -12,6 +12,7 @@ DB_DATABASE=surplus
 DB_USERNAME=root
 DB_PASSWORD=12345678
 ```
+- run `composer install`
 - run migration command `php artisan migrate` you'll see all your table will be migrate to database
 - run seeder command `php artisan db:seed` and check on table `products, category, images, category_product and product_image` some initial values will be inserted
 - to get list of route please run `php artisan route:list`
