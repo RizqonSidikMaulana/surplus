@@ -20,7 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::prefix('/category')->group(function() {
-    Route::get('list', [CategoryController::class, 'list']);
+    Route::get('list-category-product', [CategoryController::class, 'listCategoryWithProduct']);
+    Route::get('list-all', [CategoryController::class, 'listAllCategory']);
     Route::post('store', [CategoryController::class, 'store']);
     Route::get('show/{id}', [CategoryController::class, 'show']);
     Route::put('update/{id}', [CategoryController::class, 'update']);

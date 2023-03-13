@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
-use App\Http\Resources\CategoryResource;
+use App\Http\Resources\ResponseResource;
 use App\Models\Category;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\Console\Input\Input;
 
 class CategoryController extends Controller
 {
@@ -15,15 +16,49 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function list()
+    public function listCategoryWithProduct()
     {
+        $page = 1;
+        if (request('page') != null) {
+            $page = request('page');
+        }
+
+        $data = Category::with(['products' => function ($query) {
+            $query->where('enable', true);
+        }])->where('enable', '=', true);
+
+        $data = $data->paginate(10, ['*'], 'page', $page);
+
         $response = [
             'status' => true,
             'message' => 'success',
-            'data' => Category::where('enable', '=', true)->paginate(15)
+            'data' => $data,
         ];
 
-        return new CategoryResource($response);
+        return new ResponseResource($response);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function listAllCategory()
+    {
+        $page = 1;
+        if (request('page') != null) {
+            $page = request('page');
+        }
+        
+        $data = Category::paginate(10, ['*'], 'page', $page);
+
+        $response = [
+            'status' => true,
+            'message' => 'success',
+            'data' => $data,
+        ];
+
+        return new ResponseResource($response);
     }
 
     /**
@@ -64,7 +99,7 @@ class CategoryController extends Controller
             $response['message'] = 'failed to store category';
         }
 
-        return new CategoryResource($response);
+        return new ResponseResource($response);
     }
 
     /**
@@ -81,7 +116,7 @@ class CategoryController extends Controller
             'data' => [],
         ];
 
-        $category = Category::where('id', '=', $id)->where('enable', '=', true)->get();
+        $category = Category::with('products')->where('id', '=', $id)->where('enable', '=', true)->get();
         $response['data'] = $category;
 
         if (!$category->toArray()) {
@@ -91,7 +126,7 @@ class CategoryController extends Controller
             ], 404);
         }
 
-        return new CategoryResource($response);
+        return new ResponseResource($response);
     }
 
     /**
@@ -131,7 +166,7 @@ class CategoryController extends Controller
             $response['message'] = 'failed to update category';
         }
 
-        return new CategoryResource($response);
+        return new ResponseResource($response);
     }
 
     /**
@@ -154,6 +189,6 @@ class CategoryController extends Controller
             $response['message'] = 'failed to delete category';
         }
 
-        return new CategoryResource($response);
+        return new ResponseResource($response);
     }
 }
