@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\Input;
 class CategoryController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a list of categories that enable was true.
      *
      * @return \Illuminate\Http\Response
      */
@@ -39,7 +39,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a list all of categories and ignoring enable flag.
      *
      * @return \Illuminate\Http\Response
      */
@@ -177,7 +177,10 @@ class CategoryController extends Controller
      */
     public function destroy(int $id)
     {
-        $category = Category::find($id)->delete();
+        $category = Category::find($id);
+        $category->products()->detach();
+        $category->delete();
+
         $response = [
             'status' => true,
             'message' => 'success delete category',
