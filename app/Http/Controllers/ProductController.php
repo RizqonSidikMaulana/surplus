@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Resources\ResponseResource;
 use App\Models\Product;
 
 class ProductController extends Controller
@@ -13,19 +14,28 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function list()
     {
-        //
-    }
+        $page = 1;
+        if (request('page') != null) {
+            $page = request('page');
+        }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $data = Product::with(['categories' => function ($query) {
+            $query->where('enable', true);
+        }, 'images' => function ($query) {
+            $query->where('enable', true);
+        }])->where('enable', '=', true);
+
+        $data = $data->paginate(10, ['*'], 'page', $page);
+
+        $response = [
+            'status' => true,
+            'message' => 'success',
+            'data' => $data,
+        ];
+
+        return new ResponseResource($response);
     }
 
     /**
@@ -46,17 +56,6 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Product $product)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Product $product)
     {
         //
     }
