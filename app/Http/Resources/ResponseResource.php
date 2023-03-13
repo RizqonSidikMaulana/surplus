@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CategoryResource extends JsonResource
+class ResponseResource extends JsonResource
 {
     public static $wrap = '';
     /**
@@ -24,17 +24,21 @@ class CategoryResource extends JsonResource
             ],
             'data' => $data['data']
         ];
-
-        if (count($data['data']) && array_key_exists('current_page', $data['data']->toArray())) {
-            $meta = $data['data']->toArray();
-            $response['data'] = $meta['data'];
-            
-            unset($meta['data']);
-            unset($meta['links']);
-            
-            $response['meta']['pagination'] = $meta;
-            
+        
+        if (gettype($data['data']) != 'array') {
+            $data['data'] = $data['data']->toArray();
         }
+        
+        if (array_key_exists('current_page', $data['data'])) {
+            $dataArray = $data['data'];
+                $response['data'] = $dataArray['data'];
+                
+                unset($dataArray['data']);
+                unset($dataArray['links']);
+                
+                $response['meta']['pagination'] = $dataArray;
+        }
+
         
         return $response;
     }
