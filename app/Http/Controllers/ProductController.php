@@ -43,7 +43,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Display a list of products with avoid enable flag.
+     * Display a list all of products and ignoring enable flag.
      *
      * @return \Illuminate\Http\Response
      */
@@ -217,7 +217,10 @@ class ProductController extends Controller
         try {
             DB::beginTransaction();
             
-            // Insert image.
+            // Update image.
+            $product->images()->delete();
+            $product->images()->detach();
+
             $idImage = [];
             foreach ($request->get('images') as $value) {
                 $idImage[] = Image::create($value)->id;
@@ -230,7 +233,7 @@ class ProductController extends Controller
 
             $product->save();
 
-            // Update categories and images of product.
+            // Update categories and images of relation product.
             $product->categories()->sync($category);
             $product->images()->sync($idImage);
 
@@ -261,6 +264,7 @@ class ProductController extends Controller
             $response['message'] = 'wrong product id';
             return new ResponseResource($response);
         }
+
         $product->images()->delete();
         $product->images()->detach();
         $product->categories()->detach();
