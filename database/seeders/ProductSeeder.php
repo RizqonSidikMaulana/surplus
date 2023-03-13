@@ -18,6 +18,7 @@ class ProductSeeder extends Seeder
         $date = date('Y-m-d H:i:s');
         $data = [
             [
+                'id' => 1,
                 'name' => 'Roti Sobek',
                 'description' => 'Rasa Coklat',
                 'enable' => true,
@@ -25,6 +26,7 @@ class ProductSeeder extends Seeder
                 'updated_at' => $date,
             ],
             [
+                'id' => 2,
                 'name' => 'Pisang Ambon',
                 'description' => '10 Buah',
                 'enable' => true,
@@ -32,6 +34,7 @@ class ProductSeeder extends Seeder
                 'updated_at' => $date,
             ],
             [
+                'id' => 3,
                 'name' => 'Susu UHT',
                 'description' => 'Rasa Vanilla',
                 'enable' => true,
@@ -39,6 +42,7 @@ class ProductSeeder extends Seeder
                 'updated_at' => $date,
             ],
             [
+                'id' => 4,
                 'name' => 'Nasi Goreng',
                 'description' => 'Special,Basic,Seafood',
                 'enable' => true,
@@ -46,6 +50,7 @@ class ProductSeeder extends Seeder
                 'updated_at' => $date,
             ],
             [
+                'id' => 5,
                 'name' => 'Keripik Pisang',
                 'description' => 'Rasa Balado, Coklat, BBQ',
                 'enable' => true,

@@ -18,6 +18,7 @@ class ImageSeeder extends Seeder
         $date = date('Y-m-d H:i:s');
         $data = [
             [
+                'id' => 1,
                 'name' => 'roti',
                 'file' => 'roti-1231123.jpg',
                 'enable' => true,
@@ -25,6 +26,7 @@ class ImageSeeder extends Seeder
                 'updated_at' => $date,
             ],
             [
+                'id' => 2,
                 'name' => 'pisang',
                 'file' => 'pisang-1231123.jpg',
                 'enable' => true,
@@ -32,6 +34,7 @@ class ImageSeeder extends Seeder
                 'updated_at' => $date,
             ],
             [
+                'id' => 3,
                 'name' => 'susu',
                 'file' => 'susu-1231123.jpg',
                 'enable' => true,
@@ -39,6 +42,7 @@ class ImageSeeder extends Seeder
                 'updated_at' => $date,
             ],
             [
+                'id' => 4,
                 'name' => 'nasgor',
                 'file' => 'nasgor-1231123.jpg',
                 'enable' => true,
@@ -46,6 +50,7 @@ class ImageSeeder extends Seeder
                 'updated_at' => $date,
             ],
             [
+                'id' => 5,
                 'name' => 'keripik',
                 'file' => 'keripik-1231123.jpg',
                 'enable' => true,
