@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('product_id')->unsigned();
             $table->integer('image_id')->unsigned();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->foreign('image_id')->references('id')->on('products')->onDelete('cascade');
+            $table->foreign('image_id')->references('id')->on('images')->onDelete('cascade');
         });
     }
 

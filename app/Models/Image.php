@@ -21,7 +21,6 @@ class Image extends Model
         'pivot',
     ];
 
-
     public function products()
     {
         return $this->belongsToMany(Product::class, 'product_image');

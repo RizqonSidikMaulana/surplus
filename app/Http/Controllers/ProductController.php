@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ResponseResource;
+use App\Models\Category;
+use App\Models\Image;
 use App\Models\Product;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a list of products that enable was true.
      *
      * @return \Illuminate\Http\Response
      */
@@ -39,6 +43,31 @@ class ProductController extends Controller
     }
 
     /**
+     * Display a list of products with avoid enable flag.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function listAll()
+    {
+        $page = 1;
+        if (request('page') != null) {
+            $page = request('page');
+        }
+
+        $data = Product::with('categories', 'images');
+
+        $data = $data->paginate(10, ['*'], 'page', $page);
+
+        $response = [
+            'status' => true,
+            'message' => 'success',
+            'data' => $data,
+        ];
+
+        return new ResponseResource($response);
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\StoreProductRequest  $request
@@ -46,18 +75,93 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        //
+        $response = [
+            'status' => true,
+            'message' => 'success store product',
+            'data' => [],
+        ];
+
+        // Validate form.
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string',
+            'description' => 'string',
+            'categories' => 'required|array',
+            'images' => 'required|array',
+            'images.*.name' => 'required|string',
+            'images.*.file' => 'required|string',
+            'images.*.enable' => 'boolean',
+            'enable' => 'boolean',
+        ]);
+
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $response['message'] = $validator->errors()->first();
+            return new ResponseResource($response);
+        }
+
+        // Check category id
+        $category = $request->get('categories');
+        $resCategory = Category::whereIn('id', $category)->get();
+        if (count($category) != count($resCategory->toArray())) {
+            $response['status'] = false;
+            $response['message'] = 'wrong categories id';
+            return new ResponseResource($response);
+        }
+        try {
+            DB::beginTransaction();
+            
+            // Insert image.
+            $idImage = [];
+            foreach ($request->get('images') as $value) {
+                $idImage[] = Image::create($value)->id;
+            }
+
+            $idProduct = Product::create([
+                'name' => $request->get('name'),
+                'description' => $request->get('description'),
+                'enable' => $request->get('enable'),
+            ])->id;
+
+            $product = Product::find($idProduct);
+            $product->categories()->sync($category);
+            $product->images()->sync($idImage);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            $response['status'] = false;
+            $response['message'] = $e->getMessage();
+            return new ResponseResource($response);
+        }
+
+        return new ResponseResource($response);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified product.
      *
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function show(Product $product)
+    public function show(int $id)
     {
-        //
+        $response = [
+            'status' => true,
+            'message' => 'success',
+            'data' => [],
+        ];
+
+        $product = Product::with('categories', 'images')->where('id', '=', $id)->get();
+        $response['data'] = $product;
+
+        if (!$product->toArray()) {
+            $response['status'] = false;
+            $response['message'] = 'Data not found';
+            return new ResponseResource($response);
+        }
+
+        return new ResponseResource($response);
     }
 
     /**

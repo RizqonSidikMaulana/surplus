@@ -116,7 +116,7 @@ class CategoryController extends Controller
             'data' => [],
         ];
 
-        $category = Category::with('products')->where('id', '=', $id)->where('enable', '=', true)->get();
+        $category = Category::with('products')->where('id', '=', $id)->get();
         $response['data'] = $category;
 
         if (!$category->toArray()) {

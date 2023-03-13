@@ -21,11 +21,13 @@ class Product extends Model
         'pivot',
     ];
 
-    public function categories() {
+    public function categories()
+    {
         return $this->belongsToMany(Category::class, 'category_product');
     }
 
-    public function images() {
+    public function images()
+    {
         return $this->belongsToMany(Image::class, 'product_image');
     }
 }
