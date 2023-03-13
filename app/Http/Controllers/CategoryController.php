@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
@@ -13,19 +15,15 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function list()
     {
-        //
-    }
+        $response = [
+            'status' => true,
+            'message' => 'success',
+            'data' => Category::where('enable', '=', true)->paginate(15)
+        ];
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return new CategoryResource($response);
     }
 
     /**
@@ -36,7 +34,37 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        //
+        // Validate form.
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string',
+            'enable' => 'boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'data' => [],
+                'message' => $validator->errors()->first(),
+                'success' => false,
+            ]);
+        }
+
+        $response = [
+            'status' => true,
+            'message' => 'success store category',
+            'data' => [],
+        ];
+
+        $category = Category::create([
+            'name' => $request->get('name'),
+            'enable' => $request->get('enable'),
+        ]);
+
+        if (!$category) {
+            $response['status'] = false;
+            $response['message'] = 'failed to store category';
+        }
+
+        return new CategoryResource($response);
     }
 
     /**
@@ -45,20 +73,25 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function show(Category $category)
+    public function show(int $id)
     {
-        //
-    }
+        $response = [
+            'status' => true,
+            'message' => 'success',
+            'data' => [],
+        ];
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Category $category)
-    {
-        //
+        $category = Category::where('id', '=', $id)->where('enable', '=', true)->get();
+        $response['data'] = $category;
+
+        if (!$category->toArray()) {
+            return response()->json([
+                'data' => [],
+                'message' => 'Data not found'
+            ], 404);
+        }
+
+        return new CategoryResource($response);
     }
 
     /**
@@ -68,9 +101,37 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(UpdateCategoryRequest $request, int $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string',
+            'enable' => 'boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'data' => [],
+                'message' => $validator->errors()->first(),
+                'success' => false,
+            ]);
+        }
+
+        $response = [
+            'status' => true,
+            'message' => 'success update category',
+            'data' => [],
+        ];
+
+        $category = Category::find($id);
+        $category->name = $request->get('name');
+        $category->enable = $request->get('enable');
+
+        if (!$category->save()) {
+            $response['false'] = false;
+            $response['message'] = 'failed to update category';
+        }
+
+        return new CategoryResource($response);
     }
 
     /**
@@ -79,8 +140,20 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy(int $id)
     {
-        //
+        $category = Category::find($id)->delete();
+        $response = [
+            'status' => true,
+            'message' => 'success delete category',
+            'data' => [],
+        ];
+
+        if (!$category) {
+            $response['status'] = false;
+            $response['message'] = 'failed to delete category';
+        }
+
+        return new CategoryResource($response);
     }
 }
